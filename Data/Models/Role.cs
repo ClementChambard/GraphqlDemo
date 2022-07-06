@@ -8,10 +8,10 @@ public class Role {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
+    public int MovieId { get; set; }
+    public int ActorId { get; set; }
     public string Name { get; set; }
-    public Movie movie { get; set; }
-    public Actor actor { get; set; }
 
-    public string movieTitle => movie.Title;
-    public string actorName => actor.fullname();
+    public virtual Movie movie { get; set; }
+    public virtual Actor actor { get; set; }
 }

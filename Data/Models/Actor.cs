@@ -13,6 +13,7 @@ public class Actor {
 
     public string LastName { get; set; }
 
-    public string fullname() => (FirstName == null || LastName == null) ? null : FirstName + " " + LastName;
+    public virtual ICollection<Movie> Movies { get; set; }
+    public virtual ICollection<Role> Roles { get; set; }
 
 }

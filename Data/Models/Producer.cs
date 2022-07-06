@@ -8,11 +8,9 @@ public class Producer {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-
     public string FirstName { get; set; }
-
     public string LastName { get; set; }
 
-    public string fullname() => (FirstName == null || LastName == null) ? null : FirstName + " " + LastName;
+    public virtual ICollection<Movie> Movies { get; set; }
 
 }

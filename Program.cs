@@ -5,8 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<Api.Data.Models.ApiDbContext>(options =>
-                options.UseInMemoryDatabase("ApiDatabase"));
+builder.Services.AddDbContext<Api.Data.Models.ApiDbContext>();
 
 builder.Services.AddControllers();
 builder.Services.AddGraphQLServer()
@@ -16,6 +15,8 @@ builder.Services.AddGraphQLServer()
                 .AddSubscriptionType<Api.Resolvers.Subscription>();
 
 var app = builder.Build();
+
+Api.Data.Database.Init(app);
 
 app.UseWebSockets();
 app.UseRouting().UseEndpoints(endpoints => {
@@ -28,8 +29,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
-
-Api.Data.Database.Init(new Api.Data.Models.ApiDbContext(new DbContextOptionsBuilder<Api.Data.Models.ApiDbContext>().UseInMemoryDatabase("ApiDatabase").Options));
 
 app.UseAuthorization();
 

@@ -8,14 +8,12 @@ public class Movie {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-
+    public int ProducerId { get; set; }
     public string Title { get; set; }
 
-    public Producer producer { get; set; }
 
-    public List<Actor> Actors { get; set; }
-
-    public List<string> actorsNames() { List<string> names = new List<string>(); foreach (Actor a in Actors) names.Add(a.fullname()); return names; }
-    public string producerName() => producer.fullname();
+    public virtual Producer producer { get; set; }
+    public virtual ICollection<Actor> Actors { get; set; }
+    public virtual ICollection<Role> Roles { get; set; }
 
 }
