@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Resolvers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +10,9 @@ builder.Services.AddDbContext<ApiDbContext>();
 builder.Services.AddControllers();
 builder.Services.AddGraphQLServer()
                 .AddInMemorySubscriptions()
-                .AddQueryType<Api.Resolvers.Query>()
-                .AddMutationType<Api.Resolvers.Mutation>()
-                .AddSubscriptionType<Api.Resolvers.Subscription>();
+                .AddQueryType<Query>()
+                .AddMutationType<Mutation>()
+                .AddSubscriptionType<Subscription>();
 
 var app = builder.Build();
 
