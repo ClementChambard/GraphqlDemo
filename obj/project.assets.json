@@ -3646,8 +3646,10 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "HotChocolate >= 12.12.0",
       "HotChocolate.AspNetCore >= 12.12.0",
       "HotChocolate.Data >= 12.12.0",
+      "HotChocolate.Types >= 12.12.0",
       "Microsoft.EntityFrameworkCore.InMemory >= 6.0.6",
       "Microsoft.EntityFrameworkCore.Relational >= 6.0.6",
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.6",
@@ -3693,11 +3695,19 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "HotChocolate": {
+            "target": "Package",
+            "version": "[12.12.0, )"
+          },
           "HotChocolate.AspNetCore": {
             "target": "Package",
             "version": "[12.12.0, )"
           },
           "HotChocolate.Data": {
+            "target": "Package",
+            "version": "[12.12.0, )"
+          },
+          "HotChocolate.Types": {
             "target": "Package",
             "version": "[12.12.0, )"
           },

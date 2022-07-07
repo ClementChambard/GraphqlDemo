@@ -1,9 +1,14 @@
-using Api.Data.Models;
-
 namespace Api.Data;
 
+/// <summary>
+/// Class for some database interactions
+/// </summary>
 class Database {
 
+    /// <summary>
+    /// Initializes the database with seed data if it has not been created
+    /// </summary>
+    /// <param name="app"> the app containing the database context </param>
     public static void Init(IApplicationBuilder app) {
         using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
         {

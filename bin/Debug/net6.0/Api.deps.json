@@ -8,8 +8,10 @@
     ".NETCoreApp,Version=v6.0": {
       "Api/1.0.0": {
         "dependencies": {
+          "HotChocolate": "12.12.0",
           "HotChocolate.AspNetCore": "12.12.0",
           "HotChocolate.Data": "12.12.0",
+          "HotChocolate.Types": "12.12.0",
           "Microsoft.EntityFrameworkCore.InMemory": "6.0.6",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.6",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.6",

@@ -1,11 +1,10 @@
-using Microsoft.EntityFrameworkCore.InMemory;
-using Microsoft.EntityFrameworkCore;
+using Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<Api.Data.Models.ApiDbContext>();
+builder.Services.AddDbContext<ApiDbContext>();
 
 builder.Services.AddControllers();
 builder.Services.AddGraphQLServer()
@@ -16,7 +15,7 @@ builder.Services.AddGraphQLServer()
 
 var app = builder.Build();
 
-Api.Data.Database.Init(app);
+Database.Init(app);
 
 app.UseWebSockets();
 app.UseRouting().UseEndpoints(endpoints => {
