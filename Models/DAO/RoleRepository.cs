@@ -5,7 +5,7 @@ namespace Api.Models.DAO;
 
 /// <summary>
 /// Repository class for roles
-/// </summary>
+/// </summary> 
 public class RoleRepository {
 
     /// <summary> The context of the database </summary>

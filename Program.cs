@@ -1,19 +1,32 @@
 using Api.Data;
 using Api.Models.DAO;
 using Api.Resolvers;
+using Api.Resolvers.Queries;
+using Api.Resolvers.Mutations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddDbContext<ApiDbContext>();
-
 builder.Services.AddControllers();
+
 builder.Services.AddGraphQLServer()
-                .AddInMemorySubscriptions()
+
                 .AddQueryType<Query>()
+                .AddTypeExtension<ActorQuery>()
+                .AddTypeExtension<RoleQuery>()
+                .AddTypeExtension<MovieQuery>()
+                .AddTypeExtension<ProducerQuery>()
+
                 .AddMutationType<Mutation>()
-                .AddSubscriptionType<Subscription>();
+                .AddTypeExtension<ActorMutation>()
+                .AddTypeExtension<RoleMutation>()
+                .AddTypeExtension<MovieMutation>()
+                .AddTypeExtension<ProducerMutation>()
+
+                .AddSubscriptionType<Subscription>()
+                .AddInMemorySubscriptions();
 
 builder.Services.AddScoped<ActorRepository, ActorRepository>();
 builder.Services.AddScoped<MovieRepository, MovieRepository>();
