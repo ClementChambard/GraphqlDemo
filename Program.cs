@@ -12,6 +12,7 @@ builder.Services.AddDbContext<ApiDbContext>();
 builder.Services.AddControllers();
 
 builder.Services.AddGraphQLServer()
+                .AddFiltering()
 
                 .AddQueryType<Query>()
                 .AddTypeExtension<ActorQuery>()

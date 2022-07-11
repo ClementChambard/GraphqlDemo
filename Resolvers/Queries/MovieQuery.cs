@@ -10,6 +10,7 @@ namespace Api.Resolvers.Queries;
 public class MovieQuery {
 
     /// <summary> Query for all movies in the database </summary>
+    [UseFiltering] 
     public IQueryable<Movie> GetMovies([Service(ServiceKind.Synchronized)]MovieRepository repo) => repo.GetMovies;
 
     /// <summary> Query for a specific movie in the database </summary>

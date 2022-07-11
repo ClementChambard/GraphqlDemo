@@ -32,11 +32,11 @@ public class ApiDbContext : DbContext {
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         // Use this option if you want the database to be stored
-        // in memory
+        // in memory.
         /* options.UseInMemoryDatabase("ApiDatabase"); */
 
         // Use this option if you want the database to be stored
-        // in an external file
+        // in an external file.
         options.UseSqlite("Data Source=Database.db");
     }
 

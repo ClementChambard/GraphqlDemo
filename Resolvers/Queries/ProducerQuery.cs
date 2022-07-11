@@ -10,6 +10,7 @@ namespace Api.Resolvers.Queries;
 public class ProducerQuery {
 
     /// <summary> Query for all producers in the database </summary>
+    [UseFiltering] 
     public IQueryable<Producer> GetProducers([Service(ServiceKind.Synchronized)]ProducerRepository repo) => repo.GetProducers;
 
     /// <summary> Query for a specific producer in the database </summary>

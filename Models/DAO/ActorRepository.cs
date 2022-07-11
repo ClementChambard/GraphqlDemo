@@ -24,7 +24,7 @@ public class ActorRepository {
 
     /// <summary> Query for a specific actor in the database </summary>
     /// <param name="id"> The id of the actor </param>
-    public IQueryable<Actor> GetActorById(int id) => _context.Actors.Include(a => a.Roles).Include(a => a.Movies).Where(x => x.Id == id);
+    public IQueryable<Actor> GetActorById(int? id) => _context.Actors.Include(a => a.Roles).Include(a => a.Movies).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an actor to the database </summary>
     /// <param name="firstName"> The firstname of the actor </param>
