@@ -10,10 +10,10 @@ namespace Api.Resolvers.Queries;
 public class MovieQuery {
 
     /// <summary> Query for all movies in the database </summary>
-    public List<Movie> GetMovies([Service]MovieRepository repo) => repo.GetMovies;
+    public IQueryable<Movie> GetMovies([Service(ServiceKind.Synchronized)]MovieRepository repo) => repo.GetMovies;
 
     /// <summary> Query for a specific movie in the database </summary>
     /// <param name="id"> The id of the movie </param>
-    public Movie GetMovieById([Service]MovieRepository repo, int id) => repo.GetMovieById(id);
+    public IQueryable<Movie> GetMovieById([Service(ServiceKind.Synchronized)]MovieRepository repo, int id) => repo.GetMovieById(id);
 
 }

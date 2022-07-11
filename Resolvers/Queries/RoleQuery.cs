@@ -10,10 +10,10 @@ namespace Api.Resolvers.Queries;
 public class RoleQuery {
 
     /// <summary> Query for all roles in the database </summary>
-    public List<Role> GetRoles([Service]RoleRepository repo) => repo.GetRoles;
+    public IQueryable<Role> GetRoles([Service(ServiceKind.Synchronized)]RoleRepository repo) => repo.GetRoles;
 
     /// <summary> Query for a specific role in the database </summary>
     /// <param name="id"> The id of the role </param>
-    public Role GetRoleById([Service]RoleRepository repo, int id) => repo.GetRoleById(id);
+    public IQueryable<Role> GetRoleById([Service(ServiceKind.Synchronized)]RoleRepository repo, int id) => repo.GetRoleById(id);
 
 }

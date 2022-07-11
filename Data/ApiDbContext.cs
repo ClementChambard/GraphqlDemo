@@ -28,6 +28,7 @@ public class ApiDbContext : DbContext {
     /// <summary> The list of roles in the database </summary>
     public DbSet<Role> Roles { get; set; }
 
+    /// <summary></summary>
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         // Use this option if you want the database to be stored
@@ -39,6 +40,7 @@ public class ApiDbContext : DbContext {
         options.UseSqlite("Data Source=Database.db");
     }
 
+    /// <summary></summary>
     protected override void OnModelCreating(ModelBuilder model)
     {
         model.Entity<Movie>()

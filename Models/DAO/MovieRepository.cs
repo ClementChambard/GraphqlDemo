@@ -12,17 +12,17 @@ public class MovieRepository {
     private readonly ApiDbContext _context;
 
     /// <summary> Base constructor </summary>
-    public MovieRepository(ApiDbContext context)
+    public MovieRepository([Service(ServiceKind.Synchronized)]ApiDbContext context)
     {
         this._context = context;
     }
 
     /// <summary> Query for all movies in the database </summary>
-    public List<Movie> GetMovies => _context.Movies.Include(m => m.Actors).Include(m => m.MovieProducer).Include(m => m.Roles).ToList();
+    public IQueryable<Movie> GetMovies => _context.Movies.Include(m => m.Actors).Include(m => m.MovieProducer).Include(m => m.Roles);
 
     /// <summary> Query for a specific movie in the database </summary>
     /// <param name="id"> The id of the movie </param>
-    public Movie GetMovieById(int id) => _context.Movies.Include(m => m.Actors).Include(m => m.MovieProducer).Include(m => m.Roles).FirstOrDefault(x => x.Id == id);
+    public IQueryable<Movie> GetMovieById(int id) => _context.Movies.Include(m => m.Actors).Include(m => m.MovieProducer).Include(m => m.Roles).Where(x => x.Id == id);
 
     /// <summary> Mutation to add a movie to the database </summary>
     /// <param name="producerId"> The id of the producer of the movie </param>

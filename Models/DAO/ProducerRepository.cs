@@ -12,17 +12,17 @@ public class ProducerRepository {
     private readonly ApiDbContext _context;
 
     /// <summary> Base constructor </summary>
-    public ProducerRepository(ApiDbContext context)
+    public ProducerRepository([Service(ServiceKind.Synchronized)]ApiDbContext context)
     {
         this._context = context;
     }
 
     /// <summary> Query for all producers in the database </summary>
-    public List<Producer> GetProducers => _context.Producers.Include(p => p.Movies).ToList();
+    public IQueryable<Producer> GetProducers => _context.Producers.Include(p => p.Movies);
 
     /// <summary> Query for a specific producer in the database </summary>
     /// <param name="id"> The id of the producer </param>
-    public Producer GetProducerById(int id) => _context.Producers.Include(p => p.Movies).FirstOrDefault(x => x.Id == id);
+    public IQueryable<Producer> GetProducerById(int id) => _context.Producers.Include(p => p.Movies).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an producer to the database </summary>
     /// <param name="firstName"> The firstname of the producer </param>

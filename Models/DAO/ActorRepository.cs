@@ -14,17 +14,17 @@ public class ActorRepository {
     private readonly ApiDbContext _context;
 
     /// <summary> Base constructor </summary>
-    public ActorRepository(ApiDbContext context)
+    public ActorRepository([Service(ServiceKind.Synchronized)]ApiDbContext context)
     {
         this._context = context;
     }
 
     /// <summary> Query for all actors in the database </summary>
-    public List<Actor> GetActors => _context.Actors.Include(a => a.Roles).Include(a => a.Movies).ToList();
+    public IQueryable<Actor> GetActors => _context.Actors.Include(a => a.Roles).Include(a => a.Movies);
 
     /// <summary> Query for a specific actor in the database </summary>
     /// <param name="id"> The id of the actor </param>
-    public Actor GetActorById(int id) => _context.Actors.Include(a => a.Roles).Include(a => a.Movies).FirstOrDefault(x => x.Id == id);
+    public IQueryable<Actor> GetActorById(int id) => _context.Actors.Include(a => a.Roles).Include(a => a.Movies).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an actor to the database </summary>
     /// <param name="firstName"> The firstname of the actor </param>

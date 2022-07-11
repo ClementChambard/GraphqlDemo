@@ -12,21 +12,22 @@ public class RoleRepository {
     private readonly ApiDbContext _context;
 
     /// <summary> Base constructor </summary>
-    public RoleRepository(ApiDbContext context)
+    public RoleRepository([Service(ServiceKind.Synchronized)]ApiDbContext context)
     {
         this._context = context;
     }
 
     /// <summary> Query for all roles in the database </summary>
-    public List<Role> GetRoles => _context.Roles.Include(r => r.RoleActor).Include(r => r.RoleMovie).ToList();
+    public IQueryable<Role> GetRoles => _context.Roles.Include(r => r.RoleActor).Include(r => r.RoleMovie);
 
     /// <summary> Query for a specific role in the database </summary>
     /// <param name="id"> The id of the role </param>
-    public Role GetRoleById(int id) => _context.Roles.Include(r => r.RoleActor).Include(r => r.RoleMovie).FirstOrDefault(x => x.Id == id);
+    public IQueryable<Role> GetRoleById(int id) => _context.Roles.Include(r => r.RoleActor).Include(r => r.RoleMovie).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an role to the database </summary>
-    /// <param name="firstName"> The firstname of the role </param>
-    /// <param name="lastName"> The lastname of the role </param>
+    /// <param name="name"> The name of the role </param>
+    /// <param name="actorId"> The id of the actor playing the role </param>
+    /// <param name="movieId"> The id of the movie of the role </param>
     public async Task<Role> AddRole(string name, int? actorId, int? movieId)
     {
         Movie movie = _context.Movies.FirstOrDefault(x => x.Id == movieId);
