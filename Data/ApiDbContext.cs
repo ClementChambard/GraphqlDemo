@@ -28,6 +28,12 @@ public class ApiDbContext : DbContext {
     /// <summary> The list of roles in the database </summary>
     public DbSet<Role> Roles { get; set; }
 
+    /// <summary> The list of users in the database </summary>
+    public DbSet<Auth.User> Users { get; set; }
+
+    /// <summary> The list of user roles in the database </summary>
+    public DbSet<Auth.UserRoles> UserRoles { get; set; }
+
     /// <summary></summary>
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -76,6 +82,9 @@ public class ApiDbContext : DbContext {
              .HasMany(t => t.Movies)
              .WithOne(t => t.MovieProducer)
              .HasForeignKey(t => t.ProducerId);
+
+        model.Entity<Auth.UserRoles>();
+        model.Entity<Auth.User>();
     }
 
 }

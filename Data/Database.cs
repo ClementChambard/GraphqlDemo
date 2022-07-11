@@ -1,3 +1,5 @@
+using Api.Auth;
+
 namespace Api.Data;
 
 /// <summary>
@@ -19,6 +21,8 @@ class Database {
                 context.Movies.AddRange(Seed.SeedMovies);
                 context.Producers.AddRange(Seed.SeedProducers);
                 context.Roles.AddRange(Seed.SeedRoles);
+                context.Users.AddRange(new List<User>());
+                context.UserRoles.AddRange(new List<UserRoles>());
                 context.SaveChanges();
             }
         }
