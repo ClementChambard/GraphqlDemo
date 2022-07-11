@@ -13,9 +13,6 @@ public class Subscription {
     /// <returns> The new actor </returns>
     [Topic]
     [Subscribe]
-    public Actor OnNewActor([EventMessage]Actor actor)
-    {
-        return actor;
-    }
+    public Actor OnNewActor([EventMessage]Actor actor) => actor;
     
 }

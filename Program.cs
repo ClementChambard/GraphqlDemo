@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Models.DAO;
 using Api.Resolvers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,11 @@ builder.Services.AddGraphQLServer()
                 .AddQueryType<Query>()
                 .AddMutationType<Mutation>()
                 .AddSubscriptionType<Subscription>();
+
+builder.Services.AddScoped<ActorRepository, ActorRepository>();
+builder.Services.AddScoped<MovieRepository, MovieRepository>();
+builder.Services.AddScoped<RoleRepository, RoleRepository>();
+builder.Services.AddScoped<ProducerRepository, ProducerRepository>();
 
 var app = builder.Build();
 
