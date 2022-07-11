@@ -20,6 +20,7 @@ public class Producer {
     public string LastName { get; set; }
 
     /// <summary> The list of movies the producer produced </summary>
+    [UseFiltering] 
     public virtual ICollection<Movie> Movies { get; set; }
 
 }

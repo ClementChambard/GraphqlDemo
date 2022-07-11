@@ -20,9 +20,11 @@ public class Actor {
     public string LastName { get; set; }
 
     /// <summary> The list of movies the actor played in </summary>
+    [UseFiltering] 
     public virtual ICollection<Movie> Movies { get; set; }
 
     /// <summary> The list of roles the actor played </summary>
+    [UseFiltering] 
     public virtual ICollection<Role> Roles { get; set; }
 
 }

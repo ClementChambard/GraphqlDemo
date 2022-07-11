@@ -21,12 +21,15 @@ public class Movie {
     public string Title { get; set; }
 
     /// <summary> The producer of the movie </summary>
+    [UseFiltering] 
     public virtual Producer MovieProducer { get; set; }
 
     /// <summary> The list of actors that played in the movie </summary>
+    [UseFiltering] 
     public virtual ICollection<Actor> Actors { get; set; }
 
     /// <summary> The list of roles of the movie </summary>
+    [UseFiltering] 
     public virtual ICollection<Role> Roles { get; set; }
 
 }

@@ -24,8 +24,10 @@ public class Role {
     public string Name { get; set; }
 
     /// <summary> The movie of the role </summary>
+    [UseFiltering] 
     public virtual Movie RoleMovie { get; set; }
 
     /// <summary> The actor playing the role </summary>
+    [UseFiltering] 
     public virtual Actor RoleActor { get; set; }
 }
