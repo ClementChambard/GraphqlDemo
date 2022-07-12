@@ -1,15 +1,16 @@
 namespace Api.Auth;
 
 /// <summary>
+/// Class for the jwt settings in appsettings.json
 /// </summary>
 public class TokenSettings {
 
-    /// <summary></summary>
+    /// <summary> The token issuer </summary>
     public string Issuer { get; set; }
 
-    /// <summary></summary>
+    /// <summary> The token audience </summary>
     public string Audience { get; set; }
 
-    /// <summary></summary>
+    /// <summary> The key of the token </summary>
     public string Key { get; set; }
 }

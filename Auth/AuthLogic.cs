@@ -9,6 +9,7 @@ using System.Text;
 namespace Api.Auth;
 
 /// <summary>
+/// Interface for Authentication logic
 /// </summary>
 public interface IAuthLogic {
     /// <summary> User registration function </summary>
@@ -19,57 +20,70 @@ public interface IAuthLogic {
 }
 
 /// <summary>
+/// Main class for Aithentication logic
 /// </summary>
 public class AuthLogic : IAuthLogic {
 
     private readonly Api.Data.ApiDbContext _context;
     private readonly TokenSettings _tokenSettings;
 
-    /// <summary></summary>
+    /// <summary> Base constructor </summary>
     public AuthLogic([Service(ServiceKind.Synchronized)]Api.Data.ApiDbContext context, IOptions<TokenSettings> tokenSettings) { _context = context; _tokenSettings = tokenSettings.Value; }
 
     /// <summary>
-    /// 
+    /// Register a new user in the database
     /// </summary>
-    /// <param name="firstName"></param>
-    /// <param name="lastName"></param>
-    /// <param name="emailAddress"></param>
-    /// <param name="password"></param>
-    /// <param name="confirmPassword"></param>
-    /// <returns></returns>
+    /// <param name="firstName"> The firstname of the user </param>
+    /// <param name="lastName"> The lastname of the user </param>
+    /// <param name="emailAddress"> The email address of the user </param>
+    /// <param name="password"> The password of the user </param>
+    /// <param name="confirmPassword"> A confirmation for the password of the user </param>
+    /// <returns> A success or error message </returns>
     public string Register(string firstName, string lastName, string emailAddress, string password, string confirmPassword)
     {
         string errorMessage = RegistrationValidation(emailAddress, password, confirmPassword);
-        if (!string.IsNullOrEmpty(errorMessage)) return errorMessage;
+        if (!string.IsNullOrEmpty(errorMessage))
+            return errorMessage;
+
         User newUser = new User{
             EmailAddress = emailAddress,
             FirstName = firstName,
             LastName = lastName,
             Password = PasswordHash(password)
         };
+
         _context.Users.Add(newUser);
         _context.SaveChanges();
+
         UserRoles newUserRoles = new UserRoles{
             Name = "default",
             UserId = newUser.UserId
         };
+
         _context.UserRoles.Add(newUserRoles);
         _context.SaveChanges();
+
         return "Registration success";
     }
 
     /// <summary>
-    /// 
+    /// Login to an account in the database
     /// </summary>
-    /// <param name="email"></param>
-    /// <param name="password"></param>
-    /// <returns></returns>
+    /// <param name="email"> The email address of the account </param>
+    /// <param name="password"> The password of the account </param>
+    /// <returns> A JWT for authentication </returns>
     public string Login(string email, string password)
     {
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return "Invelid credentials";
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            return "Invelid credentials";
+
         var user = _context.Users.Where(_ => _.EmailAddress == email).FirstOrDefault();
-        if (user == null) return "Invalid credentials";
-        if (!ValidatePasswordHash(password, user.Password)) return "Invalid credentials";
+        if (user == null) 
+            return "Invalid credentials";
+
+        if (!ValidatePasswordHash(password, user.Password)) 
+            return "Invalid credentials";
+
         var roles = _context.UserRoles.Where(_ => _.UserId == user.UserId).ToList();
         return GetJWTAuthKey(user, roles);
     }
@@ -77,10 +91,13 @@ public class AuthLogic : IAuthLogic {
     private string PasswordHash(string password)
     {
         byte[] salt;
+
         RandomNumberGenerator.Create().GetBytes(salt = new byte[16]);
         var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
+
         byte[] hash = pbkdf2.GetBytes(20);
         byte[] hashBytes = new byte[36];
+
         Array.Copy(salt, 0, hashBytes, 0, 16);
         Array.Copy(hash, 0, hashBytes, 16, 20);
 
@@ -91,9 +108,13 @@ public class AuthLogic : IAuthLogic {
     {
         byte[] hashBytes = Convert.FromBase64String(dbPassword);
         byte[] salt = new byte[16];
+
         Array.Copy(hashBytes, 0, salt, 0, 16);
+
         var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
+
         byte[] hash = pbkdf2.GetBytes(20);
+
         for (int i = 0; i < 20; i++)
         {
             if (hashBytes[i + 16] != hash[i])
@@ -109,8 +130,10 @@ public class AuthLogic : IAuthLogic {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new List<Claim>();
+
         claims.Add(new Claim("Email", user.EmailAddress));
         claims.Add(new Claim("LastName", user.LastName));
+
         if ((roles?.Count ?? 0) > 0)
         {
             foreach( var role in roles)
@@ -132,13 +155,21 @@ public class AuthLogic : IAuthLogic {
 
     private string RegistrationValidation(string emailAddress, string password, string confirmPassword)
     {
-        if (string.IsNullOrEmpty(emailAddress)) return "Email can't be empty";
-        if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword)) return "Password or confirm password can't be empty";
-        if (password != confirmPassword) return "Confirm password is not the same as password";
+        if (string.IsNullOrEmpty(emailAddress)) 
+            return "Email can't be empty";
+        if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword)) 
+            return "Password or confirm password can't be empty";
+        if (password != confirmPassword) 
+            return "Confirm password is not the same as password";
+
         string emailRules = @"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
-        if (!Regex.IsMatch(emailAddress, emailRules)) return "Not a valid email";
+        if (!Regex.IsMatch(emailAddress, emailRules)) 
+            return "Not a valid email";
+
         string passwordRules = @"^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$";
-        if (!Regex.IsMatch(password, passwordRules)) return "Not a valid password";
+        if (!Regex.IsMatch(password, passwordRules)) 
+            return "Not a valid password";
+
         return string.Empty;
     }
 }
