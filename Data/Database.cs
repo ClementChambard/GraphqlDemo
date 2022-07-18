@@ -21,8 +21,8 @@ class Database {
                 context.Movies.AddRange(Seed.SeedMovies);
                 context.Producers.AddRange(Seed.SeedProducers);
                 context.Roles.AddRange(Seed.SeedRoles);
-                context.Users.AddRange(new List<User>());
-                context.UserRoles.AddRange(new List<UserRoles>());
+                context.Users.AddRange(Seed.SeedUsers);
+                context.UserRoles.AddRange(Seed.SeedUserRoles);
                 context.SaveChanges();
             }
         }

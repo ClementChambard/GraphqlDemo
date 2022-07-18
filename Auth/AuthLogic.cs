@@ -88,7 +88,12 @@ public class AuthLogic : IAuthLogic {
         return GetJWTAuthKey(user, roles);
     }
 
-    private string PasswordHash(string password)
+    /// <summary>
+    /// Create a hash from a string
+    /// </summary>
+    /// <param name="password"> The original password </param>
+    /// <returns> The hashed password </returns>
+    public static string PasswordHash(string password)
     {
         byte[] salt;
 

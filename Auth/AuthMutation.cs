@@ -1,3 +1,5 @@
+using HotChocolate.AspNetCore.Authorization;
+
 namespace Api.Auth;
 
 /// <summary>
@@ -30,5 +32,13 @@ public class AuthMutation {
     {
         return authLogic.Login(email, password);
     }
+
+    /// <summary> Test action for default roles </summary>
+    [Authorize(Roles=new[]{"default", "admin"})] 
+    public string ActionDefault() => "You have access to default actions";
+
+    /// <summary> Test action for admin roles </summary>
+    [Authorize(Roles=new[]{"admin"})] 
+    public string ActionAdmin() => "You have access to admin actions";
 
 }

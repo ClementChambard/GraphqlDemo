@@ -1,6 +1,5 @@
 using Api.Models;
 using Api.Models.DAO;
-using HotChocolate.AspNetCore.Authorization;
 
 namespace Api.Resolvers.Queries;
 
@@ -16,7 +15,6 @@ public class ActorQuery {
 
     /// <summary> Query for a specific actor in the database </summary>
     /// <param name="id"> The id of the actor </param>
-    [Authorize(Roles=new[]{"default","admin"})] 
     public IQueryable<Actor> GetActorById([Service(ServiceKind.Synchronized)]ActorRepository repo, int id) => repo.GetActorById(id);
 
 }

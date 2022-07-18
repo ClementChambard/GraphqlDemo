@@ -5,7 +5,6 @@ using Api.Resolvers.Queries;
 using Api.Resolvers.Mutations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 
@@ -47,6 +46,8 @@ builder.Services.AddGraphQLServer()
                     o.Complexity.DefaultComplexity = 1;
                     o.Complexity.DefaultResolverComplexity = 5;
                 })
+                .UsePersistedQueryPipeline()
+                .AddReadOnlyFileSystemQueryStorage("./persisted_queries")
 
                 .AddQueryType<Query>()
                 .AddTypeExtension<ActorQuery>()

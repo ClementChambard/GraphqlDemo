@@ -43,4 +43,22 @@ public class Seed
         new Role{Id = 3, Name = "The programmer", RoleActor = SeedActors[0], RoleMovie = SeedMovies[1]},
         new Role{Id = 4, Name = "The hacker", RoleActor = SeedActors[1], RoleMovie = SeedMovies[1]}
     };
+
+    /// <summary> 
+    /// The users to put in the database during its initialisation 
+    /// </summary>
+    public static List<Auth.User> SeedUsers = new List<Auth.User>
+    {
+        new Auth.User{UserId = 1, FirstName = "ADMIN", LastName = "X", EmailAddress = "admin@api.com", Password = Auth.AuthLogic.PasswordHash("Test$001")},
+        new Auth.User{UserId = 2, FirstName = "USER", LastName = "X", EmailAddress = "user@test.com", Password = Auth.AuthLogic.PasswordHash("Aaaa**00")}
+    };
+
+    /// <summary> 
+    /// The users roles to put in the database during its initialisation 
+    /// </summary>
+    public static List<Auth.UserRoles> SeedUserRoles = new List<Auth.UserRoles>
+    {
+        new Auth.UserRoles{RoleId = 1, UserId = 1, Name = "admin"},
+        new Auth.UserRoles{RoleId = 2, UserId = 2, Name = "default"}
+    };
 }
