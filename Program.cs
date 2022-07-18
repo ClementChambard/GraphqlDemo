@@ -82,7 +82,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints => {
     endpoints.MapGraphQLHttp("/api");
     endpoints.MapBananaCakePop("/api/IDE");
-    endpoints.MapGraphQLSchema("/api/schema");
+    endpoints.MapGraphQLSchema("/api/schema").RequireAuthorization();
     endpoints.MapGraphQLWebSocket("/api/ws");
     endpoints.MapControllers();
 });
