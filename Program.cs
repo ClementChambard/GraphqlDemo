@@ -80,7 +80,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => {
-    endpoints.MapGraphQL();
+    endpoints.MapGraphQLHttp("/api");
+    endpoints.MapBananaCakePop("/api/IDE");
+    endpoints.MapGraphQLSchema("/api/schema");
+    endpoints.MapGraphQLWebSocket("/api/ws");
     endpoints.MapControllers();
 });
 
