@@ -1,4 +1,6 @@
 using Api.Data;
+using Api.Models.Inputs;
+using Api.Models.Payloads;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.DAO;
@@ -25,19 +27,17 @@ public class MovieRepository {
     public IQueryable<Movie> GetMovieById(int? id) => _context.Movies.Include(m => m.Actors).Include(m => m.MovieProducer).Include(m => m.Roles).Where(x => x.Id == id);
 
     /// <summary> Mutation to add a movie to the database </summary>
-    /// <param name="producerId"> The id of the producer of the movie </param>
-    /// <param name="title"> The title of the movie </param>
-    /// <param name="actors"> The actors that played in the movie </param>
-    public async Task<Movie> AddMovie(string title, int? producerId, List<Actor> actors)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddMoviePayload> AddMovie(AddMovieInput input)
     {
-        Movie movie = new Movie{Title = title, Actors = actors, MovieProducer = _context.Producers.FirstOrDefault(x => x.Id == producerId)};
-        if (actors == null) 
+        Movie movie = new Movie{Title = input.Title, Actors = input.Actors, MovieProducer = _context.Producers.FirstOrDefault(x => x.Id == input.ProducerId)};
+        if (input.Actors is null) 
         {
             movie.Actors = new List<Actor>();
         }
         else 
         {
-            foreach (Actor a in actors) 
+            foreach (Actor a in input.Actors) 
             {
                 if (_context.Actors.FirstOrDefault(x => ((x.FirstName == a.FirstName) && (x.LastName == a.LastName)) || (x.Id == a.Id)) == null)
                     _context.Actors.Add(a);
@@ -45,59 +45,55 @@ public class MovieRepository {
         }
         _context.Movies.Add(movie);
         await _context.SaveChangesAsync();
-        return movie;
+        return new AddMoviePayload{CreatedMovie = movie};
     }
 
     /// <summary> Mutation to remove a movie from the database </summary>
-    /// <param name="movieId"> The id of the movie to remove </param>
-    public async Task<Movie> RemoveMovie(int movieId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveMoviePayload> RemoveMovie(RemoveMovieInput input)
     {
-        Movie movie = _context.Movies.FirstOrDefault(x => x.Id == movieId);
-        if (movie == null) return null;
+        Movie movie = _context.Movies.FirstOrDefault(x => x.Id == input.MovieId);
+        if (movie is null) return new RemoveMoviePayload{DeletedMovie = null};
         _context.Movies.Remove(movie);
         await _context.SaveChangesAsync();
-        return movie;
+        return new RemoveMoviePayload{DeletedMovie = movie};
     }
 
     /// <summary> Mutation to add an actor to a movie </summary>
-    /// <param name="movieId"> The id of the movie to add the actor to </param>
-    /// <param name="actorId"> The id of the actor to add to the movie </param>
-    public async Task<Movie> AddActorToMovie(int actorId, int movieId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddActorToMoviePayload> AddActorToMovie(AddActorToMovieInput input)
     {
-        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == actorId);
-        Movie movie = _context.Movies.Include(m => m.Actors).FirstOrDefault(x => x.Id == movieId);
-        if ((movie == null) || (actor == null)) return null; // find out how to send error message here
-        movie.Actors.Add(actor);
+        Movie movie = _context.Movies.Include(m => m.Actors).FirstOrDefault(x => x.Id == input.MovieId);
+        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == input.ActorId);
+        if (movie is null) return new AddActorToMoviePayload{UpdatedMovie = movie, AddedActor = actor};
+        if (actor is not null) movie.Actors.Add(actor);
         await _context.SaveChangesAsync();
-        return movie;
+        return new AddActorToMoviePayload{UpdatedMovie = movie, AddedActor = actor};
     }
 
     /// <summary> Mutation to remove an actor from a movie </summary>
-    /// <param name="movieId"> The id of the movie to remove the actor from </param>
-    /// <param name="actorId"> The id of the actor to remove from the movie </param>
-    public async Task<Actor> RemoveActorFromMovie(int movieId, int actorId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveActorFromMoviePayload> RemoveActorFromMovie(RemoveActorFromMovieInput input)
     {
-        Movie movie = _context.Movies.Include(m => m.Actors).FirstOrDefault(x => x.Id == movieId);
-        if (movie == null) return null;
-        Actor actor = movie.Actors.FirstOrDefault(x => x.Id == actorId);
-        if (actor == null) return null;
-        movie.Actors.Remove(actor);
+        Movie movie = _context.Movies.Include(m => m.Actors).FirstOrDefault(x => x.Id == input.MovieId);
+        Actor actor = movie.Actors.FirstOrDefault(x => x.Id == input.ActorId);
+        if (movie is null) return new RemoveActorFromMoviePayload{UpdatedMovie = movie, RemovedActor = actor};
+        if (actor is not null) movie.Actors.Remove(actor);
         await _context.SaveChangesAsync();
-        return actor;
+        return new RemoveActorFromMoviePayload{UpdatedMovie = movie, RemovedActor = actor};
     }
 
     /// <summary> Mutation to change a movie's producer </summary>
-    /// <param name="movieId"> The id of the movie to update </param>
-    /// <param name="producerId"> The id of the producer to associate with the movie </param>
-    public async Task<Movie> ChangeMovieProducer(int movieId, int producerId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<ChangeMovieProducerPayload> ChangeMovieProducer(ChangeMovieProducerInput input)
     {
-        Movie movie = _context.Movies.Include(m => m.MovieProducer).FirstOrDefault(x => x.Id == movieId);
-        if (movie == null) return null;
-        Producer producer = _context.Producers.FirstOrDefault(x => x.Id == producerId);
-        if (producer == null) return null;
+        Movie movie = _context.Movies.Include(m => m.MovieProducer).FirstOrDefault(x => x.Id == input.MovieId);
+        Producer producer = _context.Producers.FirstOrDefault(x => x.Id == input.ProducerId);
+        if (movie is null) return new ChangeMovieProducerPayload{UpdatedMovie = movie, NewProducer = producer, OldProducer = null};
+        Producer old = movie.MovieProducer;
         movie.MovieProducer = producer;
         await _context.SaveChangesAsync();
-        return movie;
+        return new ChangeMovieProducerPayload{UpdatedMovie = movie, NewProducer = producer, OldProducer = old};
     }
 
 }

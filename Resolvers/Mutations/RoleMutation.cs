@@ -1,4 +1,6 @@
 using Api.Models;
+using Api.Models.Inputs;
+using Api.Models.Payloads;
 using Api.Models.DAO;
 
 namespace Api.Resolvers.Mutations;
@@ -10,27 +12,23 @@ namespace Api.Resolvers.Mutations;
 public class RoleMutation {
 
     /// <summary> Mutation to add a role to the database </summary>
-    /// <param name="name"> The name of the role </param>
-    /// <param name="movieId"> The id of the movie of the role </param>
-    /// <param name="actorId"> The id of the actor playing the role </param>
-    public async Task<Role> NewRole([Service(ServiceKind.Synchronized)]RoleRepository repo, string name, int? movieId, int? actorId)
-            => await repo.AddRole(name, actorId, movieId);
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddRolePayload> AddRole([Service(ServiceKind.Synchronized)]RoleRepository repo, AddRoleInput input)
+            => await repo.AddRole(input);
 
     /// <summary> Mutation to remove a role from the database </summary>
-    /// <param name="roleId"> The id of the role to remove </param>
-    public async Task<Role> RemoveRole([Service(ServiceKind.Synchronized)]RoleRepository repo, int roleId)
-            => await repo.RemoveRole(roleId);
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveRolePayload> RemoveRole([Service(ServiceKind.Synchronized)]RoleRepository repo, RemoveRoleInput input)
+            => await repo.RemoveRole(input);
 
     /// <summary> Mutation to change a role's actor </summary>
-    /// <param name="roleId"> The id of the role to update </param>
-    /// <param name="actorId"> The id of the actor to associate with the role </param>
-    public async Task<Actor> ChangeRoleActor([Service(ServiceKind.Synchronized)]RoleRepository repo, int roleId, int actorId)
-            => await repo.ChangeRoleActor(roleId, actorId);
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<ChangeRoleActorPayload> ChangeRoleActor([Service(ServiceKind.Synchronized)]RoleRepository repo, ChangeRoleActorInput input)
+            => await repo.ChangeRoleActor(input);
 
     /// <summary> Mutation to change a role's movie </summary>
-    /// <param name="roleId"> The id of the role to update </param>
-    /// <param name="movieId"> The id of the movie to associate with the role </param>
-    public async Task<Movie> ChangeRoleMovie([Service(ServiceKind.Synchronized)]RoleRepository repo, int roleId, int movieId)
-            => await repo.ChangeRoleMovie(roleId, movieId);
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<ChangeRoleMoviePayload> ChangeRoleMovie([Service(ServiceKind.Synchronized)]RoleRepository repo, ChangeRoleMovieInput input)
+            => await repo.ChangeRoleMovie(input);
 
 }

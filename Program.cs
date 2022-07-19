@@ -48,6 +48,7 @@ builder.Services.AddGraphQLServer()
                 })
                 .UsePersistedQueryPipeline()
                 .AddReadOnlyFileSystemQueryStorage("./persisted_queries")
+                //.AllowIntrospection(false)
 
                 .AddQueryType<Query>()
                 .AddTypeExtension<ActorQuery>()
@@ -80,10 +81,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => {
-    endpoints.MapGraphQLHttp("/api");
-    endpoints.MapBananaCakePop("/api/IDE");
-    endpoints.MapGraphQLSchema("/api/schema").RequireAuthorization();
-    endpoints.MapGraphQLWebSocket("/api/ws");
+    endpoints.MapGraphQLHttp("/graphql");
+    endpoints.MapBananaCakePop("/graphql/IDE");
+    endpoints.MapGraphQLSchema("/graphql/schema").RequireAuthorization();
+    endpoints.MapGraphQLWebSocket("/graphql/ws");
     endpoints.MapControllers();
 });
 

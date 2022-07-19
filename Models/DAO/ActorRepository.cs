@@ -1,5 +1,7 @@
 using Api.Resolvers;
 using Api.Data;
+using Api.Models.Inputs;
+using Api.Models.Payloads;
 using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,26 +29,25 @@ public class ActorRepository {
     public IQueryable<Actor> GetActorById(int? id) => _context.Actors.Include(a => a.Roles).Include(a => a.Movies).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an actor to the database </summary>
-    /// <param name="firstName"> The firstname of the actor </param>
-    /// <param name="lastName"> The lastname of the actor </param>
-    public async Task<Actor> AddActor([Service]ITopicEventSender sender, string firstName, string lastName)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddActorPayload> AddActor([Service]ITopicEventSender sender, AddActorInput input)
     {
-        Actor actor = new Actor{FirstName = firstName, LastName = lastName};
+        Actor actor = new Actor{FirstName = input.FirstName, LastName = input.LastName};
         _context.Actors.Add(actor);
         await _context.SaveChangesAsync();
         await sender.SendAsync(nameof(Subscription.OnNewActor), actor);
-        return actor;
+        return new AddActorPayload{CreatedActor = actor};
     }
 
     /// <summary> Mutation to remove an actor from the database </summary>
-    /// <param name="actorId"> The id of the actor to remove </param>
-    public async Task<Actor> RemoveActor(int actorId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveActorPayload> RemoveActor(RemoveActorInput input)
     {
-        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == actorId);
-        if (actor == null) return null;
+        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == input.ActorId);
+        if (actor is null) return new RemoveActorPayload{DeletedActor = null};
         _context.Actors.Remove(actor);
         await _context.SaveChangesAsync();
-        return actor;
+        return new RemoveActorPayload{DeletedActor = actor};
     }
 
 }

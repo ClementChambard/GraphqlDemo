@@ -16,7 +16,7 @@
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-                "uriFormat": "%s/api/IDE"
+                "uriFormat": "%s/graphql/IDE"
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"

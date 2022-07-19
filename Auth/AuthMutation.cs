@@ -1,4 +1,5 @@
 using HotChocolate.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Api.Auth;
 
@@ -40,5 +41,12 @@ public class AuthMutation {
     /// <summary> Test action for admin roles </summary>
     [Authorize(Roles=new[]{"admin"})] 
     public string ActionAdmin() => "You have access to admin actions";
+
+    /// <summary> Returns the connected user </summary>
+    [Authorize]
+    public User GetMe([Service] Api.Data.ApiDbContext context, ClaimsPrincipal claimsPrincipal)
+    {
+        return context.Users.Where(u => u.EmailAddress == claimsPrincipal.FindFirstValue("Email")).FirstOrDefault();
+    }
 
 }

@@ -1,4 +1,6 @@
 using Api.Data;
+using Api.Models.Inputs;
+using Api.Models.Payloads;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.DAO;
@@ -25,25 +27,24 @@ public class ProducerRepository {
     public IQueryable<Producer> GetProducerById(int id) => _context.Producers.Include(p => p.Movies).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an producer to the database </summary>
-    /// <param name="firstName"> The firstname of the producer </param>
-    /// <param name="lastName"> The lastname of the producer </param>
-    public async Task<Producer> AddProducer(string firstName, string lastName)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddProducerPayload> AddProducer(AddProducerInput input)
     {
-        Producer producer = new Producer{FirstName = firstName, LastName = lastName};
+        Producer producer = new Producer{FirstName = input.FirstName, LastName = input.LastName};
         _context.Producers.Add(producer);
         await _context.SaveChangesAsync();
-        return producer;
+        return new AddProducerPayload{CreatedProducer = producer};
     }
 
     /// <summary> Mutation to remove an producer from the database </summary>
-    /// <param name="producerId"> The id of the producer to remove </param>
-    public async Task<Producer> RemoveProducer(int producerId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveProducerPayload> RemoveProducer(RemoveProducerInput input)
     {
-        Producer producer = _context.Producers.FirstOrDefault(x => x.Id == producerId);
-        if (producer == null) return null;
+        Producer producer = _context.Producers.FirstOrDefault(x => x.Id == input.ProducerId);
+        if (producer is null) return new RemoveProducerPayload{DeletedProducer = null};
         _context.Producers.Remove(producer);
         await _context.SaveChangesAsync();
-        return producer;
+        return new RemoveProducerPayload{DeletedProducer = producer};
     }
 
 }

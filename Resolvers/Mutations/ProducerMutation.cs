@@ -1,4 +1,6 @@
 using Api.Models;
+using Api.Models.Inputs;
+using Api.Models.Payloads;
 using Api.Models.DAO;
 
 namespace Api.Resolvers.Mutations;
@@ -10,14 +12,13 @@ namespace Api.Resolvers.Mutations;
 public class ProducerMutation {
 
     /// <summary> Mutation to add a producer to the database </summary>
-    /// <param name="firstName"> The firstname of the producer </param>
-    /// <param name="lastName"> The lastname of the producer </param>
-    public async Task<Producer> NewProducer([Service(ServiceKind.Synchronized)]ProducerRepository repo, string firstName, string lastName)
-            => await repo.AddProducer(firstName, lastName);
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddProducerPayload> AddProducer([Service(ServiceKind.Synchronized)]ProducerRepository repo, AddProducerInput input)
+            => await repo.AddProducer(input);
 
     /// <summary> Mutation to remove a producer from the database </summary>
-    /// <param name="producerId"> The id of the producer to remove </param>
-    public async Task<Producer> RemoveProducer([Service(ServiceKind.Synchronized)]ProducerRepository repo, int producerId)
-            => await repo.RemoveProducer(producerId);
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveProducerPayload> RemoveProducer([Service(ServiceKind.Synchronized)]ProducerRepository repo, RemoveProducerInput input)
+            => await repo.RemoveProducer(input);
 
 }

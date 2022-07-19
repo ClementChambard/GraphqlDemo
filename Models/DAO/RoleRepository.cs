@@ -1,4 +1,6 @@
 using Api.Data;
+using Api.Models.Inputs;
+using Api.Models.Payloads;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.DAO;
@@ -25,56 +27,52 @@ public class RoleRepository {
     public IQueryable<Role> GetRoleById(int id) => _context.Roles.Include(r => r.RoleActor).Include(r => r.RoleMovie).Where(x => x.Id == id);
 
     /// <summary> Mutation to add an role to the database </summary>
-    /// <param name="name"> The name of the role </param>
-    /// <param name="actorId"> The id of the actor playing the role </param>
-    /// <param name="movieId"> The id of the movie of the role </param>
-    public async Task<Role> AddRole(string name, int? actorId, int? movieId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<AddRolePayload> AddRole(AddRoleInput input)
     {
-        Movie movie = _context.Movies.FirstOrDefault(x => x.Id == movieId);
-        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == actorId);
-        Role role = new Role{Name = name, RoleActor = actor, RoleMovie = movie};
+        Movie movie = _context.Movies.FirstOrDefault(x => x.Id == input.MovieId);
+        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == input.ActorId);
+        Role role = new Role{Name = input.Name, RoleActor = actor, RoleMovie = movie};
         _context.Roles.Add(role);
         await _context.SaveChangesAsync();
-        return role;
+        return new AddRolePayload{CreatedRole = role};
     }
 
     /// <summary> Mutation to remove an role from the database </summary>
-    /// <param name="roleId"> The id of the role to remove </param>
-    public async Task<Role> RemoveRole(int roleId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<RemoveRolePayload> RemoveRole(RemoveRoleInput input)
     {
-        Role role = _context.Roles.FirstOrDefault(x => x.Id == roleId);
-        if (role == null) return null;
+        Role role = _context.Roles.FirstOrDefault(x => x.Id == input.RoleId);
+        if (role is null) return new RemoveRolePayload{DeletedRole = null};
         _context.Roles.Remove(role);
         await _context.SaveChangesAsync();
-        return role;
+        return new RemoveRolePayload{DeletedRole = role};
     }
 
     /// <summary> Mutation to change a role's actor </summary>
-    /// <param name="roleId"> The id of the role to update </param>
-    /// <param name="actorId"> The id of the actor to associate with the role </param>
-    public async Task<Actor> ChangeRoleActor(int roleId, int actorId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<ChangeRoleActorPayload> ChangeRoleActor(ChangeRoleActorInput input)
     {
-        Role role = _context.Roles.Include(x => x.RoleActor).FirstOrDefault(x => x.Id == roleId);
-        if (role == null) return null;
-        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == actorId);
-        if (actor == null) return null;
+        Role role = _context.Roles.Include(x => x.RoleActor).FirstOrDefault(x => x.Id == input.RoleId);
+        Actor actor = _context.Actors.FirstOrDefault(x => x.Id == input.ActorId);
+        if (role is null) return new ChangeRoleActorPayload{UpdatedRole = null, NewActor = actor, OldActor = null};
+        Actor old = role.RoleActor;
         role.RoleActor = actor;
         await _context.SaveChangesAsync();
-        return actor;
+        return new ChangeRoleActorPayload{UpdatedRole = role, NewActor = actor, OldActor = old};
     }
 
     /// <summary> Mutation to change a role's movie </summary>
-    /// <param name="roleId"> The id of the role to update </param>
-    /// <param name="movieId"> The id of the movie to associate with the role </param>
-    public async Task<Movie> ChangeRoleMovie(int roleId, int movieId)
+    /// <param name="input"> Input for the mutation </param>
+    public async Task<ChangeRoleMoviePayload> ChangeRoleMovie(ChangeRoleMovieInput input)
     {
-        Role role = _context.Roles.Include(x => x.RoleMovie).FirstOrDefault(x => x.Id == roleId);
-        if (role == null) return null;
-        Movie movie = _context.Movies.FirstOrDefault(x => x.Id == movieId);
-        if (movie == null) return null;
+        Role role = _context.Roles.Include(x => x.RoleMovie).FirstOrDefault(x => x.Id == input.RoleId);
+        Movie movie = _context.Movies.FirstOrDefault(x => x.Id == input.MovieId);
+        if (role is null) return new ChangeRoleMoviePayload{UpdatedRole = null, NewMovie = movie, OldMovie = null};
+        Movie old = role.RoleMovie;
         role.RoleMovie = movie;
         await _context.SaveChangesAsync();
-        return movie; 
+        return new ChangeRoleMoviePayload{UpdatedRole = role, NewMovie = movie, OldMovie = old}; 
     }
 
 }
