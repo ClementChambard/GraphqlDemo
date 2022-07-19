@@ -12,26 +12,21 @@ public class AuthMutation {
     /// <summary>
     /// Registration mutation 
     /// </summary>
-    /// <param name="firstName"> Your firstname </param>
-    /// <param name="lastName"> Your lastname </param>
-    /// <param name="email"> Your email address </param>
-    /// <param name="password"> Your password </param>
-    /// <param name="confirmPassword"> Confirm your password </param>
-    /// <returns></returns>
-    public string Register([Service] IAuthLogic authLogic, string firstName, string lastName, string email, string password, string confirmPassword)
+    /// <param name="input"> Input for the mutation </param>
+    /// <returns> Status string </returns>
+    public RegisterPayload Register([Service] IAuthLogic authLogic, RegisterInput input)
     {
-        return authLogic.Register(firstName, lastName, email, password, confirmPassword);
+        return authLogic.Register(input);
     }
 
     /// <summary>
     /// Login mutation 
     /// </summary>
-    /// <param name="email"> Your email </param>
-    /// <param name="password"> Your password </param>
-    /// <returns></returns>
-    public string Login([Service] IAuthLogic authLogic, string email, string password)
+    /// <param name="input"> Input for the mutation </param>
+    /// <returns> Token and status string </returns>
+    public LoginPayload Login([Service] IAuthLogic authLogic, LoginInput input)
     {
-        return authLogic.Login(email, password);
+        return authLogic.Login(input);
     }
 
     /// <summary> Test action for default roles </summary>

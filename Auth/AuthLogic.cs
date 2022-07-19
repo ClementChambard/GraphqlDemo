@@ -12,11 +12,16 @@ namespace Api.Auth;
 /// Interface for Authentication logic
 /// </summary>
 public interface IAuthLogic {
+
     /// <summary> User registration function </summary>
-    public string Register(string firstName, string lastName, string emailAddress, string password, string confirmPassword);
+    /// <param name="input"> Input data (name, email, password) </param>
+    /// <returns> A sucess or error message </returns>
+    public RegisterPayload Register(RegisterInput input);
 
     /// <summary> User login fonction </summary>
-    public string Login(string email, string password);
+    /// <param name="input"> Input data (email, password) </param>
+    /// <returns> A jwt and a sucess or error message </returns>
+    public LoginPayload Login(LoginInput input);
 }
 
 /// <summary>
@@ -30,26 +35,18 @@ public class AuthLogic : IAuthLogic {
     /// <summary> Base constructor </summary>
     public AuthLogic([Service(ServiceKind.Synchronized)]Api.Data.ApiDbContext context, IOptions<TokenSettings> tokenSettings) { _context = context; _tokenSettings = tokenSettings.Value; }
 
-    /// <summary>
-    /// Register a new user in the database
-    /// </summary>
-    /// <param name="firstName"> The firstname of the user </param>
-    /// <param name="lastName"> The lastname of the user </param>
-    /// <param name="emailAddress"> The email address of the user </param>
-    /// <param name="password"> The password of the user </param>
-    /// <param name="confirmPassword"> A confirmation for the password of the user </param>
-    /// <returns> A success or error message </returns>
-    public string Register(string firstName, string lastName, string emailAddress, string password, string confirmPassword)
+    /// <inheritDoc/>
+    public RegisterPayload Register(RegisterInput input)
     {
-        string errorMessage = RegistrationValidation(emailAddress, password, confirmPassword);
+        string errorMessage = RegistrationValidation(input.Email, input.Password, input.ConfirmPassword);
         if (!string.IsNullOrEmpty(errorMessage))
-            return errorMessage;
+            return new RegisterPayload{StatusString = errorMessage};
 
         User newUser = new User{
-            EmailAddress = emailAddress,
-            FirstName = firstName,
-            LastName = lastName,
-            Password = PasswordHash(password)
+            EmailAddress = input.Email,
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            Password = PasswordHash(input.Password)
         };
 
         _context.Users.Add(newUser);
@@ -63,29 +60,24 @@ public class AuthLogic : IAuthLogic {
         _context.UserRoles.Add(newUserRoles);
         _context.SaveChanges();
 
-        return "Registration success";
+        return new RegisterPayload{StatusString = "Registration success"};
     }
 
-    /// <summary>
-    /// Login to an account in the database
-    /// </summary>
-    /// <param name="email"> The email address of the account </param>
-    /// <param name="password"> The password of the account </param>
-    /// <returns> A JWT for authentication </returns>
-    public string Login(string email, string password)
+    /// <inheritDoc/>
+    public LoginPayload Login(LoginInput input)
     {
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            return "Invelid credentials";
+        if (string.IsNullOrEmpty(input.Email) || string.IsNullOrEmpty(input.Password))
+            return new LoginPayload{Token = null, StatusString = "Invalid credentials"};
 
-        var user = _context.Users.Where(_ => _.EmailAddress == email).FirstOrDefault();
+        var user = _context.Users.Where(_ => _.EmailAddress == input.Email).FirstOrDefault();
         if (user == null) 
-            return "Invalid credentials";
+            return new LoginPayload{Token = null, StatusString = "Invalid credentials"};
 
-        if (!ValidatePasswordHash(password, user.Password)) 
-            return "Invalid credentials";
+        if (!ValidatePasswordHash(input.Password, user.Password)) 
+            return new LoginPayload{Token = null, StatusString = "Invalid credentials"};
 
         var roles = _context.UserRoles.Where(_ => _.UserId == user.UserId).ToList();
-        return GetJWTAuthKey(user, roles);
+        return new LoginPayload{Token = GetJWTAuthKey(user, roles), StatusString = "Success"};
     }
 
     /// <summary>
