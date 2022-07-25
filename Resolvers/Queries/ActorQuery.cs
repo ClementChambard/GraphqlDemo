@@ -10,6 +10,7 @@ namespace Api.Resolvers.Queries;
 public class ActorQuery {
 
     /// <summary> Query for all actors in the database </summary>
+    [UsePaging]
     [UseFiltering] 
     public IQueryable<Actor> GetActors([Service(ServiceKind.Synchronized)]ActorRepository repo) => repo.GetActors;
 

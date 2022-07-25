@@ -6,7 +6,7 @@ using Api.Resolvers.Mutations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             ValidateIssuerSigningKey = true
                         };
                 });
+                //.AddMicrosoftIdentityWebApi(builder.Configuration);
 
 builder.Services.AddGraphQLServer()
                 .AddAuthorization()
@@ -41,10 +42,16 @@ builder.Services.AddGraphQLServer()
                 .ModifyRequestOptions(o =>
                 {
                     o.Complexity.Enable = true;
-                    o.Complexity.MaximumAllowed = 150;
+                    o.Complexity.MaximumAllowed = 1500;
                     o.Complexity.ApplyDefaults = true;
                     o.Complexity.DefaultComplexity = 1;
                     o.Complexity.DefaultResolverComplexity = 5;
+                    o.Complexity.Calculation = context =>
+                    {
+                        int childComplexity = context.ChildComplexity;
+                        if (context.Field.ToString().Contains("[")) childComplexity *= 5;
+                        return Math.Min(context.Complexity + childComplexity, 999999);
+                    };
                 })
                 .UsePersistedQueryPipeline()
                 .AddReadOnlyFileSystemQueryStorage("./persisted_queries")
