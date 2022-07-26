@@ -6,7 +6,6 @@ using Api.Resolvers.Mutations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +32,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             ValidateIssuerSigningKey = true
                         };
                 });
-                //.AddMicrosoftIdentityWebApi(builder.Configuration);
 
 builder.Services.AddGraphQLServer()
                 .AddAuthorization()

@@ -44,10 +44,10 @@ public class ActorRepository {
     public async Task<RemoveActorPayload> RemoveActor(RemoveActorInput input)
     {
         Actor actor = _context.Actors.FirstOrDefault(x => x.Id == input.ActorId);
-        if (actor is null) return new RemoveActorPayload{DeletedActor = null};
+        if (actor is null) return new RemoveActorPayload{DeletedActor = null, StatusString = "No actor with id: " + input.ActorId};
         _context.Actors.Remove(actor);
         await _context.SaveChangesAsync();
-        return new RemoveActorPayload{DeletedActor = actor};
+        return new RemoveActorPayload{DeletedActor = actor, StatusString = "Success"};
     }
 
 }
