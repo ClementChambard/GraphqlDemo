@@ -1,0 +1,1 @@
+query PagedActorsQuery($first: Int, $last: Int, $after: String, $before: String) { actors (first: $first, last:$last, after:$after, before:$before) { pageInfo { hasPreviousPage hasNextPage startCursor endCursor } nodes { firstName lastName } } }
