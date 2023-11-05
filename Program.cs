@@ -21,7 +21,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 {
                     var tokenSettings = builder.Configuration
                     .GetSection("TokenSettings").Get<Api.Auth.TokenSettings>();
-                    options.TokenValidationParameters = 
+                    options.TokenValidationParameters =
                         new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             ValidIssuer = tokenSettings.Issuer,
@@ -86,10 +86,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => {
-    endpoints.MapGraphQLHttp("/graphql");
-    endpoints.MapBananaCakePop("/graphql/IDE");
-    endpoints.MapGraphQLSchema("/graphql/schema").RequireAuthorization();
-    endpoints.MapGraphQLWebSocket("/graphql/ws");
+    endpoints.MapGraphQL();
+   // endpoints.MapGraphQLHttp("/graphql");
+   // endpoints.MapBananaCakePop("/graphql/IDE");
+   // endpoints.MapGraphQLSchema("/graphql/schema").RequireAuthorization();
+   // endpoints.MapGraphQLWebSocket("/graphql/ws");
     endpoints.MapControllers();
 });
 
